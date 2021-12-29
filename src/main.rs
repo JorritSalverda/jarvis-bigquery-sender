@@ -1,6 +1,5 @@
 use jarvis_lib::bigquery_client::{BigqueryClient, BigqueryClientConfig};
 use jarvis_lib::model::{Measurement};
-use nats;
 
 #[tokio::main]
 pub async fn main() -> Result<(), Box<dyn std::error::Error>> {
