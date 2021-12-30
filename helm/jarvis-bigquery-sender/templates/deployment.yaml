@@ -1,0 +1,96 @@
+apiVersion: v1
+kind: Deployment
+metadata:
+  name: {{ include "jarvis-bigquery-sender.fullname" . }}
+  labels:
+    {{- include "jarvis-bigquery-sender.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "jarvis-bigquery-sender.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+        checksum/secret: {{ include (print $.Template.BasePath "/secret.yaml") . | sha256sum }}
+      labels:
+        {{- include "jarvis-bigquery-sender.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 12 }}
+      {{- end }}
+      serviceAccountName: {{ include "jarvis-bigquery-sender.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 12 }}
+      containers:
+      - name: {{ .Chart.Name }}
+        securityContext:
+          {{- toYaml .Values.securityContext | nindent 14 }}
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}    
+        env:
+        - name: ESTAFETTE_LOG_FORMAT
+          value: {{ .Values.logFormat }}
+        - name: BQ_ENABLE
+          valueFrom:
+            configMapKeyRef:
+              key: bq-enable
+              name: {{ include "jarvis-bigquery-sender.fullname" . }}
+        - name: BQ_INIT
+          valueFrom:
+            configMapKeyRef:
+              key: bq-init
+              name: {{ include "jarvis-bigquery-sender.fullname" . }}
+        - name: BQ_PROJECT_ID
+          valueFrom:
+            configMapKeyRef:
+              name: {{ include "jarvis-bigquery-sender.fullname" . }}
+              key: bq-project-id
+        - name: BQ_DATASET
+          valueFrom:
+            configMapKeyRef:
+              name: {{ include "jarvis-bigquery-sender.fullname" . }}
+              key: bq-dataset
+        - name: BQ_TABLE
+          valueFrom:
+            configMapKeyRef:
+              name: {{ include "jarvis-bigquery-sender.fullname" . }}
+              key: bq-table
+        - name: MEASUREMENT_FILE_CONFIG_MAP_NAME
+          value: {{ include "jarvis-bigquery-sender.fullname" . }}
+        - name: GOOGLE_APPLICATION_CREDENTIALS
+          value: /secrets/keyfile.json
+        ports:
+        - name: udp
+          containerPort: 8755
+          protocol: UDP
+        resources:
+          {{- toYaml .Values.resources | nindent 14 }}
+        volumeMounts:
+        - name: configs
+          mountPath: /configs
+        - name: secrets
+          mountPath: /secrets
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 12 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 12 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 12 }}
+      {{- end }}
+      hostNetwork: true
+      terminationGracePeriodSeconds: 300
+      volumes:
+      - name: configs
+        configMap:
+          name: {{ include "jarvis-bigquery-sender.fullname" . }}
+      - name: secrets
+        secret:
+          defaultMode: 420
+          secretName: {{ include "jarvis-bigquery-sender.fullname" . }}
