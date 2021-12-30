@@ -41,9 +41,5 @@ jobs:
         TAG=$(echo $GITHUB_SHA | head -c7)
         IMAGE="jsalverda/jarvis-bigquery-sender"
 
-        docker buildx build --build-arg BUILDKIT_INLINE_CACHE=1 --cache-from ${IMAGE}:dlc-builder --tag ${IMAGE}:dlc-builder --target builder --file Dockerfile .
-        docker push ${IMAGE}:dlc-builder
-
-        docker buildx build --build-arg BUILDKIT_INLINE_CACHE=1 --cache-from ${IMAGE}:dlc-builder --cache-from ${IMAGE}:dlc --tag ${IMAGE}:dlc --tag ${IMAGE}:${TAG} --file Dockerfile .
-        docker push ${IMAGE}:dlc
-        docker push ${IMAGE}:${TAG}
+        docker buildx build --push --build-arg BUILDKIT_INLINE_CACHE=1 --cache-from ${IMAGE}:dlc-builder --tag ${IMAGE}:dlc-builder --target builder --file Dockerfile .
+        docker buildx build --push --build-arg BUILDKIT_INLINE_CACHE=1 --cache-from ${IMAGE}:dlc-builder --cache-from ${IMAGE}:dlc --tag ${IMAGE}:dlc --tag ${IMAGE}:${TAG} --file Dockerfile .
