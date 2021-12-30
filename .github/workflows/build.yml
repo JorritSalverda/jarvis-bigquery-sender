@@ -62,7 +62,7 @@ jobs:
         repository: JorritSalverda/helm-charts
         ref: master
         path: helm-charts
-        token: ${{ secrets.GITHUB_PERSONAL_ACCESS_TOKEN }}
+        token: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
     - run: |
         mkdir -p helm-charts/charts
         cp jarvis-bigquery-sender-${GITVERSION_SEMVER}.tgz helm-charts/charts
