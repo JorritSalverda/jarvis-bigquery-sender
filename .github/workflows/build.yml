@@ -38,8 +38,17 @@ jobs:
         password: ${{ secrets.DOCKERHUB_TOKEN }}
     - name: Build docker image
       run: |
+        IMAGE_NAME="jsalverda/jarvis-bigquery-sender"
         TAG=$(echo $GITHUB_SHA | head -c7)
-        IMAGE="jsalverda/jarvis-bigquery-sender"
 
-        docker buildx build --push --build-arg BUILDKIT_INLINE_CACHE=1 --cache-from ${IMAGE}:dlc-builder --tag ${IMAGE}:dlc-builder --target builder --file Dockerfile .
-        docker buildx build --push --build-arg BUILDKIT_INLINE_CACHE=1 --cache-from ${IMAGE}:dlc-builder --cache-from ${IMAGE}:dlc --tag ${IMAGE}:dlc --tag ${IMAGE}:${TAG} --file Dockerfile .
+        # https://docs.openfn.org/articles/2021/10/08/improving-multistage-docker-builds-using-buildx/
+        docker buildx create --name mybuilder --use
+
+        docker buildx build \
+          --tag $IMAGE_NAME:$TAG \
+          --cache-from=type=registry,ref=$IMAGE_NAME-build-cache \
+          --cache-to=type=registry,ref=$IMAGE_NAME-build-cache,mode=max \
+          --file Dockerfile \
+          --push \
+          --progress=plain \
+          .
