@@ -60,4 +60,13 @@ jobs:
     - uses: actions/checkout@v2
       with:
         repository: JorritSalverda/helm-charts
+        ref: master
         path: helm-charts
+    - run: |
+        mkdir -p helm-charts/charts
+        cp jarvis-bigquery-sender-${GITVERSION_SEMVER}.tgz helm-charts/charts
+        cd helm-charts
+        helm repo index --url https://helm.jorritsalverda.com/ .
+        git add --all
+        git commit --allow-empty -m "jarvis-bigquery-sender $GITVERSION_SEMVER"
+        git push origin master
