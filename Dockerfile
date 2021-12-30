@@ -4,6 +4,7 @@ WORKDIR /app
 RUN cargo install cargo-chef
 RUN apt-get update && apt-get install -y --no-install-recommends musl-tools
 RUN rustup target add x86_64-unknown-linux-musl
+RUN rustup component add clippy
 
 FROM chef as planner
 COPY . .
