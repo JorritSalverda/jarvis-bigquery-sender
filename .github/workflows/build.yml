@@ -42,8 +42,6 @@ jobs:
         TAG=$(echo $GITHUB_SHA | head -c7)
 
         # https://docs.openfn.org/articles/2021/10/08/improving-multistage-docker-builds-using-buildx/
-        docker buildx create --name mybuilder --use
-
         docker buildx build \
           --tag $IMAGE_NAME:$TAG \
           --cache-from=type=registry,ref=$IMAGE_NAME-build-cache \
