@@ -3,8 +3,25 @@ name: Build
 on: [push, pull_request]
 
 jobs:
-  bake:
+  calculate-version:
     runs-on: ubuntu-latest
+    outputs:
+      semVer: ${{ steps.gitversion.outputs.semVer }}
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - uses: gittools/actions/gitversion/setup@v0.9.7
+        with:
+          versionSpec: '5.x'
+      - id: gitversion
+        uses: gittools/actions/gitversion/execute@v0.9.7
+
+  docker:
+    runs-on: ubuntu-latest
+    needs: calculate-version
+    env:
+      SEMVER: ${{ needs.calculate-version.outputs.semVer }}
     steps:
     - uses: actions/checkout@v2
     - uses: docker/setup-buildx-action@v1
@@ -15,14 +32,48 @@ jobs:
     - name: Build docker image
       run: |
         IMAGE_NAME="jsalverda/jarvis-bigquery-sender"
-        TAG=$(echo $GITHUB_SHA | head -c7)
-
         # https://docs.openfn.org/articles/2021/10/08/improving-multistage-docker-builds-using-buildx/
         docker buildx build \
-          --tag $IMAGE_NAME:$TAG \
+          --tag $IMAGE_NAME:$SEMVER \
           --cache-from=type=registry,ref=$IMAGE_NAME-build-cache \
           --cache-to=type=registry,ref=$IMAGE_NAME-build-cache,mode=max \
           --file Dockerfile \
           --push \
           --progress=plain \
           .
+
+  helm:
+    runs-on: ubuntu-latest
+    needs: calculate-version
+    env:
+      SEMVER: ${{ needs.calculate-version.outputs.semVer }}
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+    - uses: azure/setup-helm@v1
+    - run: helm lint --with-subcharts helm/jarvis-bigquery-sender
+    - run: helm package --app-version $SEMVER --version $SEMVER --dependency-update helm/jarvis-bigquery-sender
+
+			# foundation.RunCommand(ctx, "mkdir -p %v/%v", params.RepositoryDirectory, params.RepositoryChartsSubdirectory)
+			# foundation.RunCommand(ctx, "cp %v %v/%v", filename, params.RepositoryDirectory, params.RepositoryChartsSubdirectory)
+			# err = os.Chdir(params.RepositoryDirectory)
+			# log.Info().Msgf("Generating/updating index file for repository %v...", params.RepositoryURL)
+			# foundation.RunCommand(ctx, "helm repo index --url %v .", params.RepositoryURL)
+			# log.Info().Msg("Pushing changes to repository...")
+			# foundation.RunCommandWithArgs(ctx, "git", []string{"config", "--global", "user.email", "'bot@estafette.io'"})
+			# foundation.RunCommandWithArgs(ctx, "git", []string{"config", "--global", "user.name", "'estafette-bot'"})
+			# foundation.RunCommand(ctx, "git status")
+			# foundation.RunCommand(ctx, "git add --all")
+			# foundation.RunCommandWithArgs(ctx, "git", []string{"commit", "--allow-empty", "-m", fmt.Sprintf("'%v v%v'", params.Chart, params.Version)})
+			# foundation.RunCommand(ctx, "git push origin %v", params.RepositoryBranch)
+
+  clone-charts-repo:
+    image: extensions/git-clone:stable
+    repo: helm-charts
+    branch: master
+
+  publish-helm-chart:
+    image: extensions/helm:stable
+    action: publish
+    repoUrl: https://helm.jorritsalverda.com/
