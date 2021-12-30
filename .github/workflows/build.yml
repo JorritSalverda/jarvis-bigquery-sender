@@ -67,6 +67,8 @@ jobs:
         cp jarvis-bigquery-sender-${GITVERSION_SEMVER}.tgz helm-charts/charts
         cd helm-charts
         helm repo index --url https://helm.jorritsalverda.com/ .
+        git config user.email 'bot@estafette.io'
+        git config user.name 'estafette-bot'
         git add --all
         git commit --allow-empty -m "jarvis-bigquery-sender $GITVERSION_SEMVER"
         git push origin master
