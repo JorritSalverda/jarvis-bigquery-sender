@@ -86,12 +86,8 @@ spec:
       tolerations:
         {{- toYaml . | nindent 12 }}
       {{- end }}
-      hostNetwork: true
       terminationGracePeriodSeconds: 300
       volumes:
-      - name: configs
-        configMap:
-          name: {{ include "jarvis-bigquery-sender.fullname" . }}
       - name: secrets
         secret:
           defaultMode: 420
