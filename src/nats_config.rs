@@ -3,34 +3,40 @@ use std::error::Error;
 
 pub struct NatsConfig {
   pub host: String,
-  pub topic: String
+  pub subject: String,
+  pub queue: String
 }
 
 impl NatsConfig {
   pub async fn new(
     host: String,
-    topic: String
+    subject: String,
+    queue: String
   ) -> Result<Self, Box<dyn Error>> {
       println!(
-          "NatsConfig::new(host: {}, topic: {})",
-          host, topic
+          "NatsConfig::new(host: {}, subject: {}, queue: {})",
+          host, subject, queue
       );
 
       Ok(Self {
           host,
-          topic,
+          subject,
+          queue
       })
   }
 
   pub async fn from_env() -> Result<Self, Box<dyn Error>> {
       let host = env::var("NATS_HOST")
           .unwrap_or_else(|_| String::from("jarvis-nats"));
-      let topic = env::var("NATS_TOPIC")
+      let subject = env::var("NATS_SUBJECT")
         .unwrap_or_else(|_| String::from("jarvis-measurements"));
+      let queue = env::var("NATS_QUEUE")
+        .unwrap_or_else(|_| String::from("jarvis-bigquery-sender"));
 
       Self::new(
           host,
-          topic
+          subject,
+          queue
       )
       .await
   }

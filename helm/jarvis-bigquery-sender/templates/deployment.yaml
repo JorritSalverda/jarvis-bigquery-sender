@@ -60,11 +60,16 @@ spec:
             configMapKeyRef:
               name: {{ include "jarvis-bigquery-sender.fullname" . }}
               key: nats-host
-        - name: NATS_TOPIC
+        - name: NATS_SUBJECT
           valueFrom:
             configMapKeyRef:
               name: {{ include "jarvis-bigquery-sender.fullname" . }}
-              key: nats-topic
+              key: nats-subject
+        - name: NATS_QUEUE
+          valueFrom:
+            configMapKeyRef:
+              name: {{ include "jarvis-bigquery-sender.fullname" . }}
+              key: nats-queue
         - name: GOOGLE_APPLICATION_CREDENTIALS
           value: /secrets/keyfile.json
         resources:

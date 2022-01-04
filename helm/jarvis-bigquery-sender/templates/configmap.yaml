@@ -11,4 +11,5 @@ data:
   bq-dataset: {{ .Values.config.bqDataset | quote }}
   bq-table: {{ .Values.config.bqTable | quote }}
   nats-host:  {{ .Values.config.natsHost | quote }}
-  nats-topic:  {{ .Values.config.natsTopic | quote }}
+  nats-subject:  {{ .Values.config.natsSubject | quote }}
+  nats-queue:  {{ .Values.config.natsQueue | quote }}

@@ -9,7 +9,8 @@ config:
   bqDataset: jarvis
   bqTable: jarvis_measurements
   natsHost: jarvis-nats
-  natsTopic: jarvis-measurements
+  natsSubject: jarvis-measurements
+  natsQueue: jarvis-bigquery-sender
 
 secret:
   gcpServiceAccountKeyfile: '{}'
