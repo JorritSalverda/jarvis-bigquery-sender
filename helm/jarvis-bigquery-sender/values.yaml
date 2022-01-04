@@ -8,6 +8,8 @@ config:
   bqProjectID: gcp-project-id
   bqDataset: jarvis
   bqTable: jarvis_measurements
+  natsHost: jarvis-nats
+  natsTopic: jarvis-measurements
 
 secret:
   gcpServiceAccountKeyfile: '{}'

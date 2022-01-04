@@ -30,8 +30,6 @@ spec:
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
         imagePullPolicy: {{ .Values.image.pullPolicy }}    
         env:
-        - name: ESTAFETTE_LOG_FORMAT
-          value: {{ .Values.logFormat }}
         - name: BQ_ENABLE
           valueFrom:
             configMapKeyRef:
@@ -57,14 +55,18 @@ spec:
             configMapKeyRef:
               name: {{ include "jarvis-bigquery-sender.fullname" . }}
               key: bq-table
-        - name: MEASUREMENT_FILE_CONFIG_MAP_NAME
-          value: {{ include "jarvis-bigquery-sender.fullname" . }}
+        - name: NATS_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: {{ include "jarvis-bigquery-sender.fullname" . }}
+              key: nats-host
+        - name: NATS_TOPIC
+          valueFrom:
+            configMapKeyRef:
+              name: {{ include "jarvis-bigquery-sender.fullname" . }}
+              key: nats-topic
         - name: GOOGLE_APPLICATION_CREDENTIALS
           value: /secrets/keyfile.json
-        ports:
-        - name: udp
-          containerPort: 8755
-          protocol: UDP
         resources:
           {{- toYaml .Values.resources | nindent 14 }}
         volumeMounts:
