@@ -24,11 +24,16 @@ pub async fn main() -> Result<(), Box<dyn std::error::Error>> {
   signal_hook::flag::register(signal_hook::consts::SIGTERM, Arc::clone(&term))?;
   while !term.load(Ordering::Relaxed) {
     match sub.next_timeout(Duration::from_secs(10)) {
-      Err(ref e) if e.kind() == std::io::ErrorKind::TimedOut => continue,
+      Err(ref e) if e.kind() == std::io::ErrorKind::TimedOut => {
+        println!("Timed out waiting for message, continuing");
+        continue
+      },
       Err(e) => panic!("Failed getting next message: {}",e),
       Ok(msg) => {
-        let measurement: Measurement = serde_json::from_slice(&msg.data).unwrap();
-        bigquery_client.insert_measurement(&measurement).await?;
+        println!("Received message");
+
+        let measurement: Measurement = serde_json::from_slice(&msg.data).expect("Failed to deserialize measurement");
+        bigquery_client.insert_measurement(&measurement).await.expect("Failed to insert measurement into bigquery table");
       }
     }
   }
