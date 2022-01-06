@@ -15,7 +15,7 @@ pub async fn main() -> Result<(), Box<dyn std::error::Error>> {
   bigquery_client.init_table().await?;
 
   let nats_client_config = NatsClientConfig::from_env().await?;
-  let nats_client = NatsClient::new(nats_client_config);
+  let mut nats_client = NatsClient::new(nats_client_config);
 
   let sub = nats_client.queue_subscribe()?;
 

@@ -10,5 +10,5 @@ nats = "0"
 tokio = { version = "1", features = ["macros"] }
 serde_json = "^1.0.74"
 gcp-bigquery-client = "0.9"
-jarvis-lib = { git = "https://github.com/JorritSalverda/jarvis-lib", tag = "0.1.23" }
+jarvis-lib = { git = "https://github.com/JorritSalverda/jarvis-lib", tag = "0.1.25" }
 signal-hook = "0.3.13"
