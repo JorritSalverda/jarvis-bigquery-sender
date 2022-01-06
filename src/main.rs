@@ -3,6 +3,7 @@ mod bigquery_client;
 use crate::bigquery_client::{BigqueryClient, BigqueryClientConfig};
 use jarvis_lib::model::{Measurement};
 use jarvis_lib::nats_client::{NatsClientConfig, NatsClient};
+use std::time::Duration;
 
 #[tokio::main]
 pub async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -16,7 +17,7 @@ pub async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
   let sub = nats_client.queue_subscribe()?;
 
-  for msg in sub.messages() {
+  for msg in sub.timeout_iter(Duration::from_secs(10)) {
     let measurement: Measurement = serde_json::from_slice(&msg.data).unwrap();
     bigquery_client.insert_measurement(&measurement).await?;
   }
