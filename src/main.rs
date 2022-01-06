@@ -9,9 +9,6 @@ use std::sync::atomic::{AtomicBool, Ordering};
 
 #[tokio::main]
 pub async fn main() -> Result<(), Box<dyn std::error::Error>> {
-  let term = Arc::new(AtomicBool::new(false));
-  signal_hook::flag::register(signal_hook::consts::SIGTERM, Arc::clone(&term))?;
-
   let bigquery_client_config = BigqueryClientConfig::from_env().await?;
   let bigquery_client = BigqueryClient::new(bigquery_client_config);
 
@@ -22,7 +19,9 @@ pub async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
   let sub = nats_client.queue_subscribe()?;
 
-  // stop loop on sigterm
+  // stop looping messages on sigterm
+  let term = Arc::new(AtomicBool::new(false));
+  signal_hook::flag::register(signal_hook::consts::SIGTERM, Arc::clone(&term))?;
   while !term.load(Ordering::Relaxed) {
     match sub.next_timeout(Duration::from_secs(10)) {
       Err(ref e) if e.kind() == std::io::ErrorKind::TimedOut => continue,
