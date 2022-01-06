@@ -17,10 +17,15 @@ pub async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
   let sub = nats_client.queue_subscribe()?;
 
-  for msg in sub.timeout_iter(Duration::from_secs(10)) {
-    let measurement: Measurement = serde_json::from_slice(&msg.data).unwrap();
-    bigquery_client.insert_measurement(&measurement).await?;
+  loop {
+    match sub.next_timeout(Duration::from_secs(10)) {
+      // Err(IoError { kind: IoErrorKind::EndOfFile, .. }) => break,
+      Err(ref e) if e.kind() == std::io::ErrorKind::TimedOut => continue,
+      Err(e) => panic!("Failed getting next message: {}",e),
+      Ok(msg) => {
+        let measurement: Measurement = serde_json::from_slice(&msg.data).unwrap();
+        bigquery_client.insert_measurement(&measurement).await?;
+      }
+    }
   }
-
-  Ok(())
 }
