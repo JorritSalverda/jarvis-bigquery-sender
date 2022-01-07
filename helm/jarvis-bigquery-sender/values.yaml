@@ -11,6 +11,7 @@ config:
   natsHost: jarvis-nats
   natsSubject: jarvis-measurements
   natsQueue: jarvis-bigquery-sender
+  natsQueueTimeout: 15
 
 secret:
   gcpServiceAccountKeyfile: '{}'

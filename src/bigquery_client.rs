@@ -2,12 +2,12 @@ use std::env;
 use std::error::Error;
 use std::{thread, time};
 
-use jarvis_lib::model::Measurement;
 use gcp_bigquery_client::model::table::Table;
 use gcp_bigquery_client::model::table_data_insert_all_request::TableDataInsertAllRequest;
 use gcp_bigquery_client::model::table_field_schema::TableFieldSchema;
 use gcp_bigquery_client::model::table_schema::TableSchema;
 use gcp_bigquery_client::model::time_partitioning::TimePartitioning;
+use jarvis_lib::model::Measurement;
 
 pub struct BigqueryClientConfig {
     project_id: String,

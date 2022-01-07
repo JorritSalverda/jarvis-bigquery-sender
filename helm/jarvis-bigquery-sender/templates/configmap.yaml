@@ -10,6 +10,7 @@ data:
   bq-project-id: {{ .Values.config.bqProjectID | quote }}
   bq-dataset: {{ .Values.config.bqDataset | quote }}
   bq-table: {{ .Values.config.bqTable | quote }}
-  nats-host:  {{ .Values.config.natsHost | quote }}
-  nats-subject:  {{ .Values.config.natsSubject | quote }}
-  nats-queue:  {{ .Values.config.natsQueue | quote }}
+  nats-host: {{ .Values.config.natsHost | quote }}
+  nats-subject: {{ .Values.config.natsSubject | quote }}
+  nats-queue: {{ .Values.config.natsQueue | quote }}
+  nats-queue-timeout: {{ .Values.config.natsQueueTimeout | quote }}
