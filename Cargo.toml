@@ -6,6 +6,8 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+json_env_logger = { version = "0", features = ["iso-timestamps", "backtrace"] }
+log = { version = "0", features = ["kv_unstable_std"]}
 nats = "0"
 tokio = { version = "1", features = ["macros"] }
 serde_json = "^1.0.74"

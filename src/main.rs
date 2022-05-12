@@ -3,6 +3,7 @@ mod bigquery_client;
 use crate::bigquery_client::{BigqueryClient, BigqueryClientConfig};
 use jarvis_lib::model::Measurement;
 use jarvis_lib::nats_client::{NatsClient, NatsClientConfig};
+use log::info;
 use std::env;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;
@@ -10,6 +11,8 @@ use std::time::Duration;
 
 #[tokio::main]
 pub async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    json_env_logger::init();
+
     let subscribe_timeout = env::var("NATS_QUEUE_TIMEOUT")
         .unwrap_or_else(|_| String::from("15"))
         .parse::<u64>()
@@ -31,7 +34,7 @@ pub async fn main() -> Result<(), Box<dyn std::error::Error>> {
     while !term.load(Ordering::Relaxed) {
         match sub.next_timeout(Duration::from_secs(subscribe_timeout)) {
             Err(ref e) if e.kind() == std::io::ErrorKind::TimedOut => {
-                println!(
+                info!(
                     "Timed out after {}s waiting for message, continuing",
                     subscribe_timeout
                 );
@@ -39,7 +42,7 @@ pub async fn main() -> Result<(), Box<dyn std::error::Error>> {
             }
             Err(e) => panic!("Failed getting next message: {}", e),
             Ok(msg) => {
-                println!("Received message");
+                info!("Received message");
 
                 let measurement: Measurement =
                     serde_json::from_slice(&msg.data).expect("Failed to deserialize measurement");

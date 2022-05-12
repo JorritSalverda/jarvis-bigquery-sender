@@ -1,13 +1,13 @@
-use std::env;
-use std::error::Error;
-use std::{thread, time};
-
 use gcp_bigquery_client::model::table::Table;
 use gcp_bigquery_client::model::table_data_insert_all_request::TableDataInsertAllRequest;
 use gcp_bigquery_client::model::table_field_schema::TableFieldSchema;
 use gcp_bigquery_client::model::table_schema::TableSchema;
 use gcp_bigquery_client::model::time_partitioning::TimePartitioning;
 use jarvis_lib::model::Measurement;
+use log::{debug, info};
+use std::env;
+use std::error::Error;
+use std::{thread, time};
 
 pub struct BigqueryClientConfig {
     project_id: String,
@@ -27,7 +27,7 @@ impl BigqueryClientConfig {
         enable: bool,
         init: bool,
     ) -> Result<Self, Box<dyn Error>> {
-        println!(
+        debug!(
             "BigqueryClientConfig::new(project_id: {}, dataset: {}, table: {}, google_application_credentials: {}, enable: {}, init: {})",
             project_id, dataset, table, google_application_credentials, enable, init
         );
@@ -152,7 +152,7 @@ impl BigqueryClient {
             }
         }
 
-        println!("Created bigquery table {}", &self.config.table);
+        info!("Created bigquery table {}", &self.config.table);
 
         Ok(())
     }
@@ -204,7 +204,7 @@ impl BigqueryClient {
             )
             .await?;
 
-        println!("Updated schema for bigquery table {}", &self.config.table);
+        info!("Updated schema for bigquery table {}", &self.config.table);
 
         Ok(())
     }
@@ -231,7 +231,7 @@ impl BigqueryClient {
             )
             .await?;
 
-        println!(
+        info!(
             "Inserted measurement {:#?} into bigquery table {}",
             &measurement, &self.config.table
         );
