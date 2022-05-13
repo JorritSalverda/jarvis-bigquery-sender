@@ -16,7 +16,7 @@ config:
 secret:
   gcpServiceAccountKeyfile: '{}'
 
-logFormat: json
+logLevel: debug
 
 image:
   repository: jsalverda/jarvis-bigquery-sender
