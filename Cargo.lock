@@ -876,6 +876,7 @@ dependencies = [
  "gcp-bigquery-client",
  "jarvis-lib",
  "json_env_logger",
+ "kube",
  "log",
  "nats",
  "serde_json",
