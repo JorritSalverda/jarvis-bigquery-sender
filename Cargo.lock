@@ -914,7 +914,7 @@ dependencies = [
 [[package]]
 name = "jarvis-lib"
 version = "0.1.0"
-source = "git+https://github.com/JorritSalverda/jarvis-lib?tag=0.1.53#cb290f88dc487d40b4b232694204a81812468931"
+source = "git+https://github.com/JorritSalverda/jarvis-lib?tag=0.1.56#d07bea783748474afd097b7b8b069ac033b83a10"
 dependencies = [
  "async-trait",
  "chrono",
