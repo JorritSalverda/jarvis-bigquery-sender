@@ -3,15 +3,18 @@ mod bigquery_client;
 use crate::bigquery_client::{BigqueryClient, BigqueryClientConfig};
 use jarvis_lib::model::Measurement;
 use jarvis_lib::nats_client::{NatsClient, NatsClientConfig};
-use log::info;
 use std::env;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;
 use std::time::Duration;
+use tracing::info;
 
 #[tokio::main]
 pub async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    json_env_logger::init();
+    tracing_subscriber::fmt()
+        .json()
+        .with_env_filter(tracing_subscriber::EnvFilter::from_default_env())
+        .init();
 
     let subscribe_timeout = env::var("NATS_QUEUE_TIMEOUT")
         .unwrap_or_else(|_| String::from("15"))

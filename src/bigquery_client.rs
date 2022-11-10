@@ -4,10 +4,10 @@ use gcp_bigquery_client::model::table_field_schema::TableFieldSchema;
 use gcp_bigquery_client::model::table_schema::TableSchema;
 use gcp_bigquery_client::model::time_partitioning::TimePartitioning;
 use jarvis_lib::model::Measurement;
-use log::{debug, info};
 use std::env;
 use std::error::Error;
 use std::{thread, time};
+use tracing::{debug, info};
 
 pub struct BigqueryClientConfig {
     project_id: String,
