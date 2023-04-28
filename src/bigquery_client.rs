@@ -230,7 +230,7 @@ impl BigqueryClient {
             )
             .await?;
 
-        info!(
+        debug!(
             "Inserted measurement {:#?} into bigquery table {}",
             &measurement, &self.config.table
         );
