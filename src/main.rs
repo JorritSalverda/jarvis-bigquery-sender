@@ -29,7 +29,7 @@ pub async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let nats_client_config = NatsClientConfig::from_env().await?;
     let mut nats_client = NatsClient::new(nats_client_config);
 
-    let sub = nats_client.queue_subscribe()?;
+    let sub = nats_client.subscribe()?;
 
     // stop looping messages on sigterm
     let term = Arc::new(AtomicBool::new(false));
