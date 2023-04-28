@@ -37,18 +37,22 @@ pub async fn main() -> Result<(), Box<dyn std::error::Error>> {
     while !term.load(Ordering::Relaxed) {
         match sub.next_timeout(Duration::from_secs(subscribe_timeout)) {
             Err(ref e) if e.kind() == std::io::ErrorKind::TimedOut => {
-                info!(
-                    "Timed out after {}s waiting for message, continuing",
-                    subscribe_timeout
-                );
+                // info!(
+                //     "Timed out after {}s waiting for message, continuing",
+                //     subscribe_timeout
+                // );
                 continue;
             }
             Err(e) => panic!("Failed getting next message: {}", e),
             Ok(msg) => {
-                info!("Received message");
-
                 let measurement: Measurement =
                     serde_json::from_slice(&msg.data).expect("Failed to deserialize measurement");
+
+                info!(
+                    "Received message from source {} with id {}",
+                    measurement.source, measurement.id
+                );
+
                 bigquery_client
                     .insert_measurement(&measurement)
                     .await
