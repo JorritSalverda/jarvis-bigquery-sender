@@ -35,7 +35,7 @@ impl BigqueryClientConfig {
         let client = gcp_bigquery_client::Client::from_service_account_key_file(
             &google_application_credentials,
         )
-        .await;
+        .await?;
 
         Ok(Self {
             project_id,
