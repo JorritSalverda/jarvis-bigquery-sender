@@ -113,7 +113,6 @@ jobs:
             CARGO_BUILD_TARGET=${{ matrix.target }}
             CARGO_NET_OFFLINE=true
           platforms: ${{ matrix.platform }}
-          tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=registry,ref=${{ env.IMAGE_NAME }}-build-cache-${{ matrix.target }}
           cache-to: type=registry,ref=${{ env.IMAGE_NAME }}-build-cache-${{ matrix.target }},mode=max
