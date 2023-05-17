@@ -6,12 +6,13 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-async-std = "1.12"
 gcp-bigquery-client = "0.16"
-jarvis-lib = { git = "https://github.com/JorritSalverda/jarvis-lib", tag = "0.1.63" }
+jarvis-lib = { git = "https://github.com/JorritSalverda/jarvis-lib", tag = "0.1.64" }
 kube = { version = "0.82", default-features = false, features = ["client", "runtime", "derive", "rustls-tls"] }
 nats = "0.24"
+openssl = { version = "0.10", features = ["vendored"] }
 serde_json = "1.0"
 signal-hook = "0.3"
+tokio = { version = "1.28", features = ["rt", "rt-multi-thread", "macros"] }
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["json", "env-filter"] }
