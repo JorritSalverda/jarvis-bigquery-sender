@@ -12,16 +12,16 @@ ARG TARGETPLATFORM
 RUN echo "TARGETPLATFORM: $TARGETPLATFORM"
 
 RUN mkdir -p .cargo ; \
-  echo '[build]' > .cargo/config ; \
+  echo '[build]' > .cargo/config.toml ; \
   case "$TARGETPLATFORM" in \
   "linux/amd64") \
-  echo 'target = "x86_64-unknown-linux-gnu"' >> .cargo/config \
+  echo 'target = "x86_64-unknown-linux-gnu"' >> .cargo/config.toml \
   ;; \
   "linux/arm64") \
-  echo 'target = "aarch64-unknown-linux-gnu"' >> .cargo/config \
+  echo 'target = "aarch64-unknown-linux-gnu"' >> .cargo/config.toml \
   ;; \
   esac ; \
-  cat .cargo/config
+  cat .cargo/config.toml
 
 RUN apt update && apt install --assume-yes --no-install-recommends  g++-aarch64-linux-gnu libc6-dev-arm64-cross libudev-dev
 
@@ -38,7 +38,8 @@ COPY . .
 RUN cargo install --path . --root /usr/local
 
 FROM debian:bullseye-slim AS runtime
-COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
+RUN apt-get install -y ca-certificates
+# COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
 WORKDIR /app
 COPY --from=builder /usr/local/bin/jarvis-bigquery-sender .
 ENTRYPOINT ["./jarvis-bigquery-sender"]
