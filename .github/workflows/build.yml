@@ -8,7 +8,9 @@ on:
       - '**'
 
 env:
+  CARGO_TERM_COLOR: always
   IMAGE_NAME: jsalverda/jarvis-bigquery-sender
+  HELM_NAME: jarvis-bigquery-sender
 
 jobs:
   gitversion:
@@ -170,8 +172,8 @@ jobs:
       - uses: azure/setup-helm@v3
         with:
           version: v3.10.1
-      - run: helm lint --with-subcharts helm/jarvis-bigquery-sender
-      - run: helm package --app-version $GITVERSION_SEMVER --version $GITVERSION_SEMVER --dependency-update helm/jarvis-bigquery-sender
+      - run: helm lint --with-subcharts helm/${{ env.HELM_NAME }}
+      - run: helm package --app-version $GITVERSION_SEMVER --version $GITVERSION_SEMVER --dependency-update helm/${{ env.HELM_NAME }}
       - uses: actions/checkout@v2
         with:
           repository: JorritSalverda/helm-charts
@@ -180,13 +182,13 @@ jobs:
           token: ${{ secrets.GH_PERSONAL_ACCESS_TOKEN }}
       - run: |
           mkdir -p helm-charts/charts
-          cp jarvis-bigquery-sender-${GITVERSION_SEMVER}.tgz helm-charts/charts
+          cp ${{ env.HELM_NAME }}-${GITVERSION_SEMVER}.tgz helm-charts/charts
           cd helm-charts
           helm repo index --url https://helm.jorritsalverda.com/ .
           git config user.email 'bot@estafette.io'
           git config user.name 'estafette-bot'
           git add --all
-          git commit --allow-empty -m "jarvis-bigquery-sender $GITVERSION_SEMVER"
+          git commit --allow-empty -m "${{ env.HELM_NAME }} $GITVERSION_SEMVER"
           git push origin master
 
   tag:

@@ -7,8 +7,8 @@ edition = "2021"
 
 [dependencies]
 gcp-bigquery-client = "0.16"
-jarvis-lib = { git = "https://github.com/JorritSalverda/jarvis-lib", tag = "0.1.64" }
-kube = { version = "0.82", default-features = false, features = ["client", "runtime", "derive", "rustls-tls"] }
+jarvis-lib = { git = "https://github.com/JorritSalverda/jarvis-lib", tag = "0.1.65" }
+kube = { version = "0.82", default-features = false, features = ["client", "runtime", "derive"] }
 nats = "0.24"
 openssl = { version = "0.10", features = ["vendored"] }
 serde_json = "1.0"

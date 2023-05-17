@@ -863,7 +863,7 @@ dependencies = [
 [[package]]
 name = "jarvis-lib"
 version = "0.1.0"
-source = "git+https://github.com/JorritSalverda/jarvis-lib?tag=0.1.64#2cb81e5935e17e611499276eb3c8fe6838eedef2"
+source = "git+https://github.com/JorritSalverda/jarvis-lib?tag=0.1.65#9dc22b2212115ae82771a146906113a4603f17d7"
 dependencies = [
  "async-trait",
  "chrono",
@@ -961,15 +961,12 @@ dependencies = [
  "http",
  "http-body",
  "hyper",
- "hyper-rustls",
  "hyper-timeout",
  "jsonpath_lib",
  "k8s-openapi",
  "kube-core",
  "pem",
  "pin-project",
- "rustls 0.21.1",
- "rustls-pemfile 1.0.2",
  "secrecy",
  "serde",
  "serde_json",
